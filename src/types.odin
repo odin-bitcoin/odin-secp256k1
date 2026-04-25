@@ -13,3 +13,8 @@ SCHNORR_SIG_SIZE :: 64
 
 KeyPair :: struct { data: [96]byte } // official size of the internal struct
 PublicKey :: struct { data: [64]byte } // internal representation
+
+// In the C lib => typedef struct { unsigned char data[64]; } secp256k1_xonly_pubkey;
+XOnlyPublicKey :: struct {
+    data: [64]byte,
+}

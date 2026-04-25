@@ -14,15 +14,17 @@ when ODIN_OS == .Darwin {
 foreign lib {
   secp256k1_context_create :: proc(flags: u32) -> ^Context ---
   secp256k1_context_destroy :: proc(ctx: ^Context) ---
-
-  // For schnorr specifically
-  secp256k1_schnorrsig_sign32 :: proc(
-    ctx: ^Context,
-    sig64: [^]byte,
-    msg32: [^]byte,
-    keypair: ^byte, 
-    aux_rand32: ^byte,
-  ) -> i32 ---
-
+ 
   secp256k1_keypair_create :: proc(ctx: ^Context, keypair: ^KeyPair, seckey32: [^]byte) -> i32 ---
+
+  secp256k1_keypair_xonly_pub :: proc(ctx: ^Context, pubkey: ^XOnlyPublicKey, pk_parity: ^i32, keypair: ^KeyPair) -> i32 ---
+
+  // serializes an x-only pubkey to an array of bytes
+  secp256k1_xonly_pubkey_serialize :: proc(ctx: ^Context, output32: [^]byte, pubkey: ^XOnlyPublicKey) -> i32 ---
+  
+  // schnorr signature => msg32 is the hash of the message and aux_rand32 is extra entropy for safety (bip340)
+  secp256k1_schnorrsig_sign32 :: proc(ctx: ^Context, sig64: [^]byte, msg32: [^]byte, keypair: ^KeyPair, aux_rand32: [^]byte) -> i32 ---
+
+  // shcnorr verification
+  secp256k1_schnorrsig_verify :: proc(ctx: ^Context, sig64: [^]byte, msg32: [^]byte, msglen: uint, pubkey: ^XOnlyPublicKey) -> i32 ---
 }
