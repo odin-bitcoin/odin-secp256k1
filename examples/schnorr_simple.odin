@@ -2,18 +2,18 @@ package main
 
 import "core:fmt"
 import "core:crypto"
-import "../src/"
+import src "../src/"
 
 main :: proc() {
-  ctx := src.secp256k1_context_create(src.CONTEXT_SIGN | src.CONTEXT_VERIFY)
-  defer src.secp256k1_context_destroy(ctx)
+  ctx := src.create_context(src.CONTEXT_SIGN | src.CONTEXT_VERIFY)
+  defer src.destroy_context(ctx)
 
   private_key := make([]byte, 32) // creates a 32 byte slice for the private key
   defer delete(private_key) //cleans the slice memory allocation
   crypto.rand_bytes(private_key) //generates random bytes and fills the slice
 
   kp: src.KeyPair
-  if src.secp256k1_keypair_create(ctx, &kp, raw_data(private_key)) != 1 {
+  if src.create_keypair(ctx, &kp, raw_data(private_key)) != 1 {
     fmt.println("Error: not able to create keypair.")
     return
   }

@@ -3,13 +3,13 @@ package main
 
 import "core:fmt"
 import "core:crypto" //to generate random numbers
-import "../src/"
+import src "../src/"
 
 main :: proc() {
     // creates the context.
-    ctx := src.secp256k1_context_create(src.CONTEXT_SIGN | src.CONTEXT_VERIFY)
+    ctx := src.create_context(src.CONTEXT_SIGN | src.CONTEXT_VERIFY)
     
-    defer src.secp256k1_context_destroy(ctx)
+    defer src.destroy_context(ctx)
 
     private_key := make([]byte, 32) // creates a 32 byte slice for the private key
     defer delete(private_key) //cleans the slice memory allocation

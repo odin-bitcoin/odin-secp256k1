@@ -6,9 +6,9 @@ import "../src/"
 
 main :: proc() {
     // creates the context.
-    ctx := src.secp256k1_context_create(src.CONTEXT_SIGN | src.CONTEXT_VERIFY)
+    ctx := src.create_context(src.CONTEXT_SIGN | src.CONTEXT_VERIFY)
     
-    defer src.secp256k1_context_destroy(ctx)
+    defer src.destroy_context(ctx)
  
     if ctx != nil {
       fmt.println("The secp256k1 context was created.")

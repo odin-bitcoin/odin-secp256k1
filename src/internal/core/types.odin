@@ -1,5 +1,5 @@
 // In this file we only add the data definitions, consts and enums
-package secp256k1
+package core
 
 // Opaque context structure
 Context :: struct {}
