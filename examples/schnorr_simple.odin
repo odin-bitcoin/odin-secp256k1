@@ -12,8 +12,8 @@ main :: proc() {
   defer delete(private_key) //cleans the slice memory allocation
   crypto.rand_bytes(private_key) //generates random bytes and fills the slice
 
-  kp: src.KeyPair
-  if src.create_keypair(ctx, &kp, raw_data(private_key)) != 1 {
+  kp, error := src.create_keypair(ctx, private_key)
+  if error == false {
     fmt.println("Error: not able to create keypair.")
     return
   }
