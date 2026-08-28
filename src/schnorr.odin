@@ -3,16 +3,6 @@ package secp256k1
 import core "./internal/core/"
 import "core:crypto"
 
-// extract the XOnlyPublicKey (64 bytes) from KeyPair
-extract_xonly_pubkey :: proc(ctx: ^Context, kp: ^KeyPair) -> (XOnlyPublicKey, bool) {
-    pubkey: XOnlyPublicKey
-    parity: i32
-    
-    result := core.secp256k1_keypair_xonly_pub(ctx, &pubkey, &parity, kp)
-    
-    return pubkey, result == 1
-}
-
 sign_schnorr :: proc(ctx: ^Context, msg_hash: []byte, kp: ^KeyPair) -> ([64]byte, bool) {
   sig: [64]byte
 
