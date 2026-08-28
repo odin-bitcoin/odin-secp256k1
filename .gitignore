@@ -1,2 +1,4 @@
-/lib
+/lib/
+/.deps/
+/build/
 .DS_Store
