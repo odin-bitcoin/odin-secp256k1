@@ -1,68 +1,70 @@
 # odin-secp256k1
 
-Odin bindings for the secp256k1 library, optimized for Bitcoin. This project provides a thin, idiomatic wrapper around the C library to enable secure elliptic curve operations within the Odin ecosystem.
+Odin bindings for [libsecp256k1](https://github.com/bitcoin-core/secp256k1). The project is intended to provide a foundation for Bitcoin development in Odin through an idiomatic interface over the upstream C library.
 
-## Overview
+This is a work in progress.
 
-The secp256k1 curve is the standard for Bitcoin. This library allows Odin developers to perform operations such as context management, keypair generation, and Schnorr signatures (WIP) with native performance and improved type safety.
+## Requirements
 
-## Advantages of Using Odin
+- Odin
+- Git
+- CMake
+- `make`
+- A C compiler
 
-Choosing Odin for cryptographic implementations provides several benefits over traditional C or other modern languages:
+The current build flow targets macOS and Linux. On Windows, use WSL until a native Windows toolchain is documented and tested.
 
-1. Type Safety: Odin's strong typing system prevents many common errors found in C, such as implicit pointer conversions and ambiguous memory layouts.
-2. Controlled Memory Management: Explicit allocation and the 'defer' keyword ensure that sensitive cryptographic data is properly handled and cleared.
-3. C Interoperability: Odin's foreign import system allows for seamless integration with high-performance C libraries like libsecp256k1 without overhead.
-4. Readable Syntax: The language offers a modern, clean syntax that remains close to the hardware while providing high-level constructs for better maintainability.
-5. Performance: As a compiled language, Odin provides the performance necessary for heavy cryptographic computations.
+## Build
 
-## Features
+The Makefile downloads the pinned `libsecp256k1` revision, builds only the required modules, and writes the static library to `lib/libsecp256k1.a`.
 
-- Context Creation and Destruction: Safe management of the secp256k1 execution context.
-- Keypair Generation: Utility functions to create internal keypair representations from private keys.
-- Schnorr Signatures: Support for the Schnorr signature scheme as defined in BIP340.
-- Wrapper Functions: High-level Odin procedures that wrap raw C calls for better ergonomics and safety checks.
+```sh
+make
+```
 
-## Project Structure
+Run an example after building:
 
-- src/: Core bindings and wrapper implementations.
-- lib/: Contains the static library (libsecp256k1.a).
-- examples/: Practical demonstrations of how to use the library.
-- build_secp256k1.sh: Script for building the underlying C library.
+```sh
+make example EXAMPLE=examples/start_context.odin
+```
 
-## Getting Started
+Other useful commands:
 
-To use this library in your Odin project, ensure you have the compiled static library in the lib directory.
+```sh
+make test
+make info
+make clean
+make distclean
+```
+
+## Project structure
+
+```text
+src/
+  Public Odin API
+  internal/core/        C FFI bindings and ABI-compatible types
+
+examples/               API usage examples
+lib/                    Generated libsecp256k1 static library
+```
+
+Code outside this repository should use the API in `src/`. Files under `src/internal/core/` mirror the upstream C headers and are implementation details.
+
+## Usage
+
+The examples import the public package and never call the C bindings directly:
 
 ```odin
-package main
+import secp256k1 "path/to/odin-secp256k1/src"
 
-import "core:fmt"
-import "core:crypto"
-import "src"
-
-main :: proc() {
-    // Create the context
-    ctx := src.create_context(src.CONTEXT_SIGN | src.CONTEXT_VERIFY)
-    defer src.destroy_context(ctx)
-
-    // Generate a private key
-    private_key := make([]byte, 32)
-    defer delete(private_key)
-    crypto.rand_bytes(private_key)
-    
-    // Create a keypair
-    keypair, ok := src.create_keypair(ctx, private_key)
-
-    if ok {
-        fmt.println("Success: Keypair created.")
-        fmt.printf("Internal data: %x\n", keypair.data)
-    } else {
-        fmt.println("Error: Failed to create keypair.")
-    }
-}
+ctx := secp256k1.create_context(
+    secp256k1.CONTEXT_SIGN | secp256k1.CONTEXT_VERIFY,
+)
+defer secp256k1.destroy_context(ctx)
 ```
+
+Adjust the import path to match your Odin collection or local dependency layout.
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE.md file for details.
+MIT. See [LICENSE.md](LICENSE.md).
